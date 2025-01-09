@@ -1,33 +1,28 @@
 package supermarkt;
 
+import java.util.concurrent.atomic.AtomicInteger;
+class Kunde {
+   private static final AtomicInteger idGenerator = new AtomicInteger(1);
+   private final int id;
+   private final double warenwert;
 
-public class Kunde {
-   private int id;
-   private double warenwert;
-
-   private static int nextId = 1;
-
-   private Kunde(){
-      this.id = nextId++;
-      this.warenwert = Math.random() * 100.00;
+   private Kunde(double warenwert) {
+       this.id = idGenerator.getAndIncrement();
+       this.warenwert = warenwert;
    }
 
-   public static Kunde einkaufen(){
-      Kunde kunde = new Kunde();
-      System.out.println("Einkauf von " + kunde.toString());
-      return kunde;
-   }
-
-   public String toString(){
-      return String.format("Kunde %d mit Warenwert %.2f", id, warenwert);
-   }  
-
-   public int getId() {
-      return id;
+   public static Kunde einkaufen() {
+       double warenwert = Math.random() * 100; // Einkaufswert zwischen 0 und 100 Euro
+       Kunde kunde = new Kunde(warenwert);
+       System.out.printf("Kunde %d erstellt mit Warenwert %.2f Euro.%n", kunde.id, kunde.warenwert);
+       return kunde;
    }
 
    public double getWarenwert() {
-      return warenwert;
+       return warenwert;
    }
 
-}
+   public int getId() {
+       return id;
+   }
+} 
