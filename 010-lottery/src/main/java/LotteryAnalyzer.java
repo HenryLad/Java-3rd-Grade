@@ -17,7 +17,7 @@ public class LotteryAnalyzer {
             return;
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
 
         try {
             List<Path> files = getAllFiles(directoryPath, ".txt");
