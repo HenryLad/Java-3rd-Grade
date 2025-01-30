@@ -59,6 +59,7 @@ public class Main {
 
         // An jeden String "!" anhängen
         System.out.println("Anhängen von !: " + transformStrings(strings, s -> s + "!"));
+        
 
         // Umgekehrte Strings
         System.out.println(
