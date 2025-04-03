@@ -12,8 +12,10 @@ public class DbTest {
         Database database = Database.getInstance();
         ContactRepository contactRepository = new ContactRepository();
 
-        contactRepository.addContact("Max Mustermann", "0664 1234567", "Musterstraße 1");
-        contactRepository.addContact("Erika Mustermann", "0664 7654321", "Musterstraße 2");
+        //contactRepository.addContact("Max Mustermann", "0664 1234567", "Musterstraße 1");
+        contactRepository.updateContact(new contact(1,"Max Mustermann", "0664 1234567", "Musterstraße 69"));
+        contactRepository.deleteContact(2);
+
 
         List<contact> contacts = contactRepository.getAllContacts();
     }

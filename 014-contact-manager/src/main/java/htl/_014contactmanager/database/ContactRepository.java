@@ -50,13 +50,13 @@ public class ContactRepository {
         }
     }
 
-    public void updateContact(int id, String name, String phone, String address) {
+    public void updateContact(contact contact) {
         String sql = "UPDATE CONTACTS SET NAME = ?, PHONE = ?, ADDRESS = ? WHERE ID = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, phone);
-            pstmt.setString(3, address);
-            pstmt.setInt(4, id);
+            pstmt.setString(1, contact.getName());
+            pstmt.setString(2, contact.getNumber());
+            pstmt.setString(3, contact.getAdress());
+            pstmt.setInt(4, contact.getId());
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

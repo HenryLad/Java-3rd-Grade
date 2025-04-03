@@ -61,4 +61,21 @@ public class contact {
         return "%d: %s (%s,%s)".formatted(getId(), getName(), getNumber(), getAdress());
     }
 
+  public void setAdress(String text) {
+      this.adress.set(text);
+  }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public void setNumber(String number) {
+        this.number.set(number);
+    }
+
+
 }
