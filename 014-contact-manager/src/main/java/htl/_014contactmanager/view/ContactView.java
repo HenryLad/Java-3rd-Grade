@@ -1,6 +1,7 @@
 package htl._014contactmanager.view;
 
 import htl._014contactmanager.model.ContactType;
+import htl._014contactmanager.model.Country;
 import htl._014contactmanager.model.Location;
 import htl._014contactmanager.model.contact;
 import javafx.geometry.Insets;
@@ -47,6 +48,11 @@ public class ContactView {
     private final HBox hBoxLocation = new HBox();
     private final Label lblLocation = new Label("Ort");
     private final ComboBox<Location> cmbLocation = new ComboBox<>();
+    
+    // Country ComboBox
+    private final HBox hBoxCountry = new HBox();
+    private final Label lblCountry = new Label("Land");
+    private final ComboBox<Country> cmbCountry = new ComboBox<>();
 
     private final Button btnAdd = new Button("Add");
     private final Button btnEdit = new Button("Edit");
@@ -118,6 +124,12 @@ public class ContactView {
         cmbContactType.getItems().addAll(ContactType.values());
         hBoxType.getChildren().addAll(lblType, cmbContactType);
         
+        // Country
+        hBoxCountry.setSpacing(10);
+        hBoxCountry.setPadding(new Insets(0, 0, 10, 10));
+        lblCountry.setPrefWidth(50);
+        hBoxCountry.getChildren().addAll(lblCountry, cmbCountry);
+        
         // Location
         hBoxLocation.setSpacing(10);
         hBoxLocation.setPadding(new Insets(0, 0, 10, 10));
@@ -137,6 +149,7 @@ public class ContactView {
             hBoxTelephone, 
             hBoxEmail, 
             hBoxType,
+            hBoxCountry,
             hBoxLocation,
             HboxEdit
         );
@@ -160,6 +173,10 @@ public class ContactView {
     
     public ComboBox<ContactType> getCmbContactType() {
         return cmbContactType;
+    }
+    
+    public ComboBox<Country> getCmbCountry() {
+        return cmbCountry;
     }
     
     public ComboBox<Location> getCmbLocation() {
@@ -188,6 +205,10 @@ public class ContactView {
     
     public void setCmbContactTypeDisabled(boolean disabled) {
         cmbContactType.setDisable(disabled);
+    }
+    
+    public void setCmbCountryDisabled(boolean disabled) {
+        cmbCountry.setDisable(disabled);
     }
     
     public void setCmbLocationDisabled(boolean disabled) {
@@ -223,6 +244,7 @@ public class ContactView {
         setTfTelephoneEditable(editable);
         setTfEmailEditable(editable);
         setCmbContactTypeDisabled(!editable);
+        setCmbCountryDisabled(!editable);
         setCmbLocationDisabled(!editable);
     }
 

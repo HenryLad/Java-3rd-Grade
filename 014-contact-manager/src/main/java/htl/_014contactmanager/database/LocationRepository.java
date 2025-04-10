@@ -1,5 +1,6 @@
 package htl._014contactmanager.database;
 
+import htl._014contactmanager.model.Country;
 import htl._014contactmanager.model.Location;
 
 import java.sql.Connection;
@@ -15,9 +16,27 @@ import java.util.List;
 public class LocationRepository {
 
     private Connection connection;
+    private CountryRepository countryRepository;
+    private boolean hasCountryIdColumn = false;
 
     public LocationRepository() {
         connection = Database.getInstance().getConnection();
+        countryRepository = new CountryRepository();
+        checkTableColumns();
+    }
+    
+    private void checkTableColumns() {
+        try {
+            // Check if COUNTRY_ID column exists
+            PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'LOCATIONS' AND COLUMN_NAME = 'COUNTRY_ID'");
+            ResultSet rs = stmt.executeQuery();
+            hasCountryIdColumn = rs.next();
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -32,11 +51,28 @@ public class LocationRepository {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
-                locationList.add(new Location(
-                        resultSet.getInt("ID"),
-                        resultSet.getString("ZIPCODE"),
-                        resultSet.getString("CITY")
-                ));
+                Country country = null;
+                
+                // Get country if column exists
+                if (hasCountryIdColumn) {
+                    try {
+                        int countryId = resultSet.getInt("COUNTRY_ID");
+                        if (!resultSet.wasNull()) {
+                            country = countryRepository.findById(countryId);
+                        }
+                    } catch (Exception e) {
+                        // Ignore column error
+                    }
+                }
+                
+                Location location = new Location(
+                    resultSet.getInt("ID"),
+                    resultSet.getString("ZIPCODE"),
+                    resultSet.getString("CITY"),
+                    country
+                );
+                
+                locationList.add(location);
             }
             return locationList;
         } catch (Exception e) {
@@ -59,10 +95,25 @@ public class LocationRepository {
             
             try (ResultSet resultSet = pstmt.executeQuery()) {
                 if (resultSet.next()) {
+                    Country country = null;
+                    
+                    // Get country if column exists
+                    if (hasCountryIdColumn) {
+                        try {
+                            int countryId = resultSet.getInt("COUNTRY_ID");
+                            if (!resultSet.wasNull()) {
+                                country = countryRepository.findById(countryId);
+                            }
+                        } catch (Exception e) {
+                            // Ignore column error
+                        }
+                    }
+                    
                     return new Location(
                         resultSet.getInt("ID"),
                         resultSet.getString("ZIPCODE"),
-                        resultSet.getString("CITY")
+                        resultSet.getString("CITY"),
+                        country
                     );
                 }
             }

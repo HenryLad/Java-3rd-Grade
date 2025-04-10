@@ -1,7 +1,9 @@
 package htl._014contactmanager.model;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -12,6 +14,7 @@ public class Location {
     private IntegerProperty id = new SimpleIntegerProperty();
     private StringProperty zipCode = new SimpleStringProperty();
     private StringProperty city = new SimpleStringProperty();
+    private ObjectProperty<Country> country = new SimpleObjectProperty<>();
     
     public Location() {
     }
@@ -20,6 +23,13 @@ public class Location {
         this.id.set(id);
         this.zipCode.set(zipCode);
         this.city.set(city);
+    }
+    
+    public Location(int id, String zipCode, String city, Country country) {
+        this.id.set(id);
+        this.zipCode.set(zipCode);
+        this.city.set(city);
+        this.country.set(country);
     }
     
     public int getId() {
@@ -56,6 +66,18 @@ public class Location {
     
     public StringProperty cityProperty() {
         return city;
+    }
+    
+    public Country getCountry() {
+        return country.get();
+    }
+    
+    public void setCountry(Country country) {
+        this.country.set(country);
+    }
+    
+    public ObjectProperty<Country> countryProperty() {
+        return country;
     }
     
     @Override

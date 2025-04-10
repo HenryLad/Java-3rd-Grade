@@ -2,8 +2,10 @@ package htl._014contactmanager.view;
 
 
 import htl._014contactmanager.database.ContactRepository;
+import htl._014contactmanager.database.CountryRepository;
 import htl._014contactmanager.database.LocationRepository;
 import htl._014contactmanager.model.ContactType;
+import htl._014contactmanager.model.Country;
 import htl._014contactmanager.model.Location;
 import htl._014contactmanager.model.contact;
 import javafx.collections.FXCollections;
@@ -21,24 +23,35 @@ public class ContactPresenter {
 
     private final ContactRepository contactRepository;
     private final LocationRepository locationRepository;
+    private final CountryRepository countryRepository;
     private final ObservableList<contact> contacts = FXCollections.observableArrayList();
     private final ObservableList<Location> locations = FXCollections.observableArrayList();
+    private final ObservableList<Country> countries = FXCollections.observableArrayList();
 
     private ContactPresenter(ContactView view) {
         this.view = view;
         this.contactRepository = new ContactRepository();
         this.locationRepository = new LocationRepository();
+        this.countryRepository = new CountryRepository();
         
         // Configure fields
         view.setAllFieldsEditable(false);
         view.getBtnsave().setDisable(true);
         view.getBtnEdit().setDisable(false);
 
+        loadCountries();
         loadLocations();
         bindViewToModel();
         attachEvents();
         addListeners();
         init();
+    }
+
+    private void loadCountries() {
+        // Load countries from database
+        countries.clear();
+        countries.addAll(countryRepository.getAllCountries());
+        view.getCmbCountry().setItems(countries);
     }
 
     private void loadLocations() {
@@ -59,6 +72,29 @@ public class ContactPresenter {
         view.getBtnEdit().setOnAction(event -> editContact());
         view.getBtnsave().setOnAction(event -> saveContact());
         view.getBtnDelete().setOnAction(event -> deleteContact());
+        
+        // Add listener to country combo box to filter locations
+        view.getCmbCountry().setOnAction(event -> filterLocationsByCountry());
+    }
+    
+    /**
+     * Filter locations in the location dropdown based on selected country
+     */
+    private void filterLocationsByCountry() {
+        Country selectedCountry = view.getCmbCountry().getValue();
+        
+        if (selectedCountry != null) {
+            // Filter locations by the selected country
+            List<Location> filteredLocations = locations.stream()
+                    .filter(location -> location.getCountry() != null && 
+                                       location.getCountry().getId() == selectedCountry.getId())
+                    .collect(Collectors.toList());
+            
+            view.getCmbLocation().setItems(FXCollections.observableArrayList(filteredLocations));
+        } else {
+            // If no country selected, show all locations
+            view.getCmbLocation().setItems(locations);
+        }
     }
     
     /**
@@ -116,6 +152,13 @@ public class ContactPresenter {
 
             // Enable save button
             view.setBtnsaveDisabled(false);
+            
+            // Get the contact's location and set country
+            contact selectedContact = (contact) selectedItem.getValue();
+            if (selectedContact.getLocation() != null && selectedContact.getLocation().getCountry() != null) {
+                view.getCmbCountry().setValue(selectedContact.getLocation().getCountry());
+                filterLocationsByCountry(); // Update locations based on country
+            }
         }
     }
 
@@ -180,6 +223,7 @@ public class ContactPresenter {
         view.getTfTelephone().clear();
         view.getTfEmail().clear();
         view.getCmbContactType().setValue(null);
+        view.getCmbCountry().setValue(null);
         view.getCmbLocation().setValue(null);
     }
 
@@ -228,7 +272,19 @@ public class ContactPresenter {
                 view.getTfTelephone().setText(selectedContact.getNumber());
                 view.getTfEmail().setText(selectedContact.getAdress());
                 view.getCmbContactType().setValue(selectedContact.getType());
-                view.getCmbLocation().setValue(selectedContact.getLocation());
+                
+                // Set country and location
+                if (selectedContact.getLocation() != null) {
+                    view.getCmbLocation().setValue(selectedContact.getLocation());
+                    
+                    if (selectedContact.getLocation().getCountry() != null) {
+                        view.getCmbCountry().setValue(selectedContact.getLocation().getCountry());
+                        filterLocationsByCountry(); // Update locations based on country
+                    }
+                } else {
+                    view.getCmbCountry().setValue(null);
+                    view.getCmbLocation().setValue(null);
+                }
             }
         });
     }
