@@ -1,11 +1,14 @@
 package htl._014contactmanager.view;
 
+import htl._014contactmanager.model.ContactType;
+import htl._014contactmanager.model.Location;
 import htl._014contactmanager.model.contact;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
@@ -35,6 +38,16 @@ public class ContactView {
     private final Label lblEmail = new Label("Adresse");
     private final TextField tfEmail = new TextField();
 
+    // Contact type ComboBox
+    private final HBox hBoxType = new HBox();
+    private final Label lblType = new Label("Typ");
+    private final ComboBox<ContactType> cmbContactType = new ComboBox<>();
+
+    // Location ComboBox
+    private final HBox hBoxLocation = new HBox();
+    private final Label lblLocation = new Label("Ort");
+    private final ComboBox<Location> cmbLocation = new ComboBox<>();
+
     private final Button btnAdd = new Button("Add");
     private final Button btnEdit = new Button("Edit");
     private final Button btnsave = new Button("Save");
@@ -56,7 +69,8 @@ public class ContactView {
         return btnDelete;
     }
 
-    private final ListView<contact> listView = new ListView<>();
+    // Replace ListView with TreeView
+    private final TreeView<Object> tvContacts = new TreeView<>();
 
     public ContactView() {
         init();
@@ -72,9 +86,8 @@ public class ContactView {
         hboxSearch.setPadding(new Insets(0,0, 10 , 10));
         hboxSearch.getChildren().addAll(tfSearchField, btnSearch);
 
-        // Contact List
-
-        listView.setPrefHeight(200);
+        // Contact TreeView
+        tvContacts.setPrefHeight(200);
 
         hBoxId.setSpacing(10);
         hBoxId.setPadding(new Insets(0, 0, 10, 10));
@@ -98,12 +111,35 @@ public class ContactView {
         lblEmail.setPrefWidth(50);
         hBoxEmail.getChildren().addAll(lblEmail, tfEmail);
 
+        // Contact Type
+        hBoxType.setSpacing(10);
+        hBoxType.setPadding(new Insets(0, 0, 10, 10));
+        lblType.setPrefWidth(50);
+        cmbContactType.getItems().addAll(ContactType.values());
+        hBoxType.getChildren().addAll(lblType, cmbContactType);
+        
+        // Location
+        hBoxLocation.setSpacing(10);
+        hBoxLocation.setPadding(new Insets(0, 0, 10, 10));
+        lblLocation.setPrefWidth(50);
+        hBoxLocation.getChildren().addAll(lblLocation, cmbLocation);
+
         HboxEdit.setSpacing(10);
         HboxEdit.setPadding(new Insets(0, 0, 10, 10));
         HboxEdit.getChildren().addAll(btnAdd, btnEdit, btnsave, btnDelete);
 
         // Generate View
-        root.getChildren().addAll(hboxSearch, listView, hBoxId, hBoxName, hBoxTelephone, hBoxEmail, HboxEdit);
+        root.getChildren().addAll(
+            hboxSearch, 
+            tvContacts, 
+            hBoxId, 
+            hBoxName, 
+            hBoxTelephone, 
+            hBoxEmail, 
+            hBoxType,
+            hBoxLocation,
+            HboxEdit
+        );
     }
 
     public TextField getTfId() {
@@ -120,6 +156,14 @@ public class ContactView {
 
     public TextField getTfEmail() {
         return tfEmail;
+    }
+    
+    public ComboBox<ContactType> getCmbContactType() {
+        return cmbContactType;
+    }
+    
+    public ComboBox<Location> getCmbLocation() {
+        return cmbLocation;
     }
 
     public void setTfNameEditable(boolean editable) {
@@ -140,6 +184,14 @@ public class ContactView {
     public void setTfSearchFieldEditable(boolean editable) {
         tfSearchField.setEditable(editable);
         updateTextFieldBackground(tfSearchField, editable);
+    }
+    
+    public void setCmbContactTypeDisabled(boolean disabled) {
+        cmbContactType.setDisable(disabled);
+    }
+    
+    public void setCmbLocationDisabled(boolean disabled) {
+        cmbLocation.setDisable(disabled);
     }
 
     public void setBtnAddDisabled(boolean disabled) {
@@ -170,12 +222,14 @@ public class ContactView {
         setTfNameEditable(editable);
         setTfTelephoneEditable(editable);
         setTfEmailEditable(editable);
+        setCmbContactTypeDisabled(!editable);
+        setCmbLocationDisabled(!editable);
     }
 
 
     public VBox getRoot() { return root; }
     public TextField getTfSearchField() { return tfSearchField; }
     public Button getBtnSearch() { return btnSearch; }
-    public ListView<contact> getListView() { return listView; }
+    public TreeView<Object> getTvContacts() { return tvContacts; }
 }
 

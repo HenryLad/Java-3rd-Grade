@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ### Start the database server
 
 # Start the database server

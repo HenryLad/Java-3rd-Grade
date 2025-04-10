@@ -1,0 +1,4 @@
+name: minecraft-pulgin-001
+version: '1.0-SNAPSHOT'
+main: me.minecraftPulgin001.MinecraftPulgin001
+api-version: '1.21'
